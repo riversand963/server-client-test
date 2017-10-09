@@ -1,10 +1,3 @@
-import java.net.*;
-import java.io.*;
-import java.security.*;
-import javax.net.*;
-import javax.net.ssl.*;
-
-
 public class SimpleEchoServerProcess {
     public static void main(String[] args) throws Exception {
         int port = Integer.parseInt(args[0]);

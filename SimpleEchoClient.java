@@ -1,6 +1,16 @@
-import java.io.*;
-import java.net.*;
-import javax.net.ssl.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.math.BigInteger;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 
 public class SimpleEchoClient {
     public static void main(String[] args) throws Exception {
@@ -16,6 +26,9 @@ public class SimpleEchoClient {
         printSocketInfo(socket);
 
         socket.startHandshake();
+
+        SSLSession session = ((SSLSocket) socket).getSession();
+        printSessionInfo(session);
 
         BufferedWriter bufferedWriter =
             new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -34,6 +47,23 @@ public class SimpleEchoClient {
         bufferedWriter.close();
         bufferedReader.close();
         socket.close();
+    }
+
+    private static void printSessionInfo(SSLSession session) throws Exception {
+        Certificate[] cchan = session.getPeerCertificates();
+        System.out.println("The certificates used by peer:");
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        for (int i = 0; i < cchan.length; i++) {
+            ByteArrayInputStream is = new ByteArrayInputStream(cchan[i].getEncoded());
+            X509Certificate x509Cert = (X509Certificate) cf.generateCertificate(is);
+            System.out.println(x509Cert.getSubjectDN());
+        }
+        System.out.println("Peer host is " + session.getPeerHost());
+        System.out.println("Cipher is " + session.getCipherSuite());
+        System.out.println("Protocol is " + session.getProtocol());
+        System.out.println("ID is " + new BigInteger(session.getId()));
+        System.out.println("Session created on " + session.getCreationTime());
+        System.out.println("Session accessed on " + session.getLastAccessedTime());
     }
 
     private static void printSocketInfo(SSLSocket s) {
