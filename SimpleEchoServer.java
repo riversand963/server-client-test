@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSession;
@@ -52,6 +53,12 @@ public class SimpleEchoServer {
 
             mServerSocketFactory = sslContext.getServerSocketFactory();
             mServerSocket = mServerSocketFactory.createServerSocket(mPort);
+
+            // Do NOT use weak protocols and cipher suites. Configure this according to requirements.
+            ((SSLServerSocket) mServerSocket).setEnabledProtocols(new String[] {"TLSv1.2"});
+            // ((SSLServerSocket) mServerSocket).setEnabledCipherSuites(new String[] {"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"});
+
+            // Start the server
             mStopped = false;
         }
     }
