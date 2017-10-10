@@ -74,7 +74,7 @@ public class SimpleEchoServer {
             ((SSLServerSocket) mServerSocket).setNeedClientAuth(mMutualAuthRequired);
 
             // Do NOT use weak protocols and cipher suites. Configure this according to requirements.
-            ((SSLServerSocket) mServerSocket).setEnabledProtocols(new String[] {"TLSv1.2"});
+            ((SSLServerSocket) mServerSocket).setEnabledProtocols(new String[] {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"});
             // ((SSLServerSocket) mServerSocket).setEnabledCipherSuites(new String[] {"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"});
 
             // Start the server
