@@ -25,13 +25,15 @@ import javax.net.ssl.SSLSocket;
 
 public class SimpleEchoServer {
     private final int mPort;
+    private boolean mMutualAuthRequired;
     private boolean mStopped;
     private ServerSocketFactory mServerSocketFactory;
     private ServerSocket mServerSocket;
     private List<Thread> mWorkerThreads = new ArrayList<>();
 
-    public SimpleEchoServer(int port) {
+    public SimpleEchoServer(int port, boolean mutualAuthRequired) {
         mPort = port;
+        mMutualAuthRequired = mutualAuthRequired;
         mStopped = true;
     }
     public void start() throws Exception {
@@ -57,6 +59,9 @@ public class SimpleEchoServer {
             // Do NOT use weak protocols and cipher suites. Configure this according to requirements.
             ((SSLServerSocket) mServerSocket).setEnabledProtocols(new String[] {"TLSv1.2"});
             // ((SSLServerSocket) mServerSocket).setEnabledCipherSuites(new String[] {"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"});
+
+            // Need client auth
+            ((SSLServerSocket) mServerSocket).setNeedClientAuth(mMutualAuthRequired);
 
             // Start the server
             mStopped = false;

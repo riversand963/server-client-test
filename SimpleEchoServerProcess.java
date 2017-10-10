@@ -1,7 +1,8 @@
 public class SimpleEchoServerProcess {
     public static void main(String[] args) throws Exception {
         int port = Integer.parseInt(args[0]);
-        SimpleEchoServer server = new SimpleEchoServer(port);
+        boolean mutualAuthRequired = Boolean.parseBoolean(args[1]);
+        SimpleEchoServer server = new SimpleEchoServer(port, mutualAuthRequired);
         cleanupOnShutdown(server);
         server.start();
         server.serve();

@@ -21,6 +21,7 @@ public class SimpleEchoClient {
     public static void main(String[] args) throws Exception {
         String hostName = args[0];
         int port = Integer.parseInt(args[1]);
+        boolean mutualAuthRequired = Boolean.parseBoolean(args[2]);
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(System.in));
         PrintStream out = System.out;
@@ -48,6 +49,7 @@ public class SimpleEchoClient {
 
         printSocketInfo(socket);
 
+        socket.setNeedClientAuth(mutualAuthRequired);
         socket.startHandshake();
 
         SSLSession session = ((SSLSocket) socket).getSession();
