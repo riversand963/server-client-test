@@ -1,16 +1,21 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.math.BigInteger;
+import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 
 public class SimpleEchoClient {
     public static void main(String[] args) throws Exception {
@@ -19,8 +24,22 @@ public class SimpleEchoClient {
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(System.in));
         PrintStream out = System.out;
-        SSLSocketFactory sslSocketFactory =
-            (SSLSocketFactory) SSLSocketFactory.getDefault();
+        // It is not secure to use SSLSocketFactory.getDefault().
+        // We need to construct customized SSLSocketFactory with customized SSLContext.
+        // SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+        String trustStoreFilePath = System.getProperty("javax.net.ssl.trustStore");
+        String trustStorePassword = System.getProperty("javax.net.ssl.trustStorePassword");
+        InputStream tsFin = new FileInputStream(trustStoreFilePath);
+        char[] tsPassword = trustStorePassword.toCharArray();
+        KeyStore ksTrust = KeyStore.getInstance("JKS");
+        ksTrust.load(tsFin, tsPassword);
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+        tmf.init(ksTrust);
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, tmf.getTrustManagers(), null);
+        SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
         SSLSocket socket =
             (SSLSocket) sslSocketFactory.createSocket(hostName, port);
         printSocketInfo(socket);

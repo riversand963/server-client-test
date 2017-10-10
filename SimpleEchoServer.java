@@ -1,17 +1,22 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSession;
@@ -30,7 +35,22 @@ public class SimpleEchoServer {
     }
     public void start() throws Exception {
         if (mStopped) {
-            mServerSocketFactory = SSLServerSocketFactory.getDefault();
+            // SSLServerSocketFactory.getDefault() is not secure. To gain more security,
+            // we need to construct customized SSLServerSocketFactory based on customized SSLContext.
+            // mServerSocketFactory = SSLServerSocketFactory.getDefault();
+            String keyStoreFilePath = System.getProperty("javax.net.ssl.keyStore");
+            String keyStorePassword = System.getProperty("javax.net.ssl.keyStorePassword");
+            InputStream ksFin = new FileInputStream(keyStoreFilePath);
+            char[] ksPassword = keyStorePassword.toCharArray();
+            KeyStore ksKeys = KeyStore.getInstance("PKCS12");
+            ksKeys.load(ksFin, ksPassword);
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+            kmf.init(ksKeys, ksPassword);
+
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(kmf.getKeyManagers(), null, null);
+
+            mServerSocketFactory = sslContext.getServerSocketFactory();
             mServerSocket = mServerSocketFactory.createServerSocket(mPort);
             mStopped = false;
         }
