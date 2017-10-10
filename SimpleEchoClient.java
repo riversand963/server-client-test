@@ -11,6 +11,7 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
@@ -22,9 +23,18 @@ public class SimpleEchoClient {
         String hostName = args[0];
         int port = Integer.parseInt(args[1]);
         boolean mutualAuthRequired = Boolean.parseBoolean(args[2]);
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(System.in));
-        PrintStream out = System.out;
+
+        KeyManagerFactory kmf = null;
+        if (mutualAuthRequired) {
+            String keyStoreFilePath = System.getProperty("javax.net.ssl.keyStore");
+            String keyStorePassword = System.getProperty("javax.net.ssl.keyStorePassword");
+            InputStream ksFin = new FileInputStream(keyStoreFilePath);
+            char[] ksPassword = keyStorePassword.toCharArray();
+            KeyStore ksKeys = KeyStore.getInstance("PKCS12");
+            ksKeys.load(ksFin, ksPassword);
+            kmf = KeyManagerFactory.getInstance("SunX509");
+            kmf.init(ksKeys, ksPassword);
+        }
         // It is not secure to use SSLSocketFactory.getDefault().
         // We need to construct customized SSLSocketFactory with customized SSLContext.
         // SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
@@ -38,7 +48,8 @@ public class SimpleEchoClient {
         tmf.init(ksTrust);
 
         SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, tmf.getTrustManagers(), null);
+        sslContext.init(kmf != null ? kmf.getKeyManagers() : null,
+            tmf.getTrustManagers(), null);
         SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
         SSLSocket socket =
@@ -47,18 +58,23 @@ public class SimpleEchoClient {
         ((SSLSocket) socket).setEnabledProtocols(new String[] {"TLSv1.2"});
         // ((SSLSocket) socket).setEnabledCipherSuites(new String[] {"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"});
 
+        socket.setNeedClientAuth(mutualAuthRequired);
         printSocketInfo(socket);
 
-        socket.setNeedClientAuth(mutualAuthRequired);
         socket.startHandshake();
 
         SSLSession session = ((SSLSocket) socket).getSession();
         printSessionInfo(session);
 
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(System.in));
+        PrintStream out = System.out;
+
         BufferedWriter bufferedWriter =
             new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         BufferedReader bufferedReader =
             new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
         String line;
         String response;
         while ((line = in.readLine()) != null) {

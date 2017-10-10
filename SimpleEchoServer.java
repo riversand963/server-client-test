@@ -15,13 +15,14 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import javax.net.ServerSocketFactory;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
-import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManagerFactory;
 
 public class SimpleEchoServer {
     private final int mPort;
@@ -50,18 +51,31 @@ public class SimpleEchoServer {
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
             kmf.init(ksKeys, ksPassword);
 
+            TrustManagerFactory tmf = null;
+            if (mMutualAuthRequired) {
+                String trustStoreFilePath = System.getProperty("javax.net.ssl.trustStore");
+                String trustStorePassword = System.getProperty("javax.net.ssl.trustStorePassword");
+                InputStream tsFin = new FileInputStream(trustStoreFilePath);
+                char[] tsPassword = trustStorePassword.toCharArray();
+                KeyStore ksTrust = KeyStore.getInstance("JKS");
+                ksTrust.load(tsFin, tsPassword);
+                tmf = TrustManagerFactory.getInstance("SunX509");
+                tmf.init(ksTrust);
+            }
+
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(kmf.getKeyManagers(), null, null);
+            sslContext.init(kmf.getKeyManagers(),
+                tmf != null ? tmf.getTrustManagers() : null, null);
 
             mServerSocketFactory = sslContext.getServerSocketFactory();
             mServerSocket = mServerSocketFactory.createServerSocket(mPort);
 
+            // Need client auth
+            ((SSLServerSocket) mServerSocket).setNeedClientAuth(mMutualAuthRequired);
+
             // Do NOT use weak protocols and cipher suites. Configure this according to requirements.
             ((SSLServerSocket) mServerSocket).setEnabledProtocols(new String[] {"TLSv1.2"});
             // ((SSLServerSocket) mServerSocket).setEnabledCipherSuites(new String[] {"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"});
-
-            // Need client auth
-            ((SSLServerSocket) mServerSocket).setNeedClientAuth(mMutualAuthRequired);
 
             // Start the server
             mStopped = false;
