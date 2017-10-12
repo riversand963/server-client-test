@@ -55,6 +55,7 @@ FILE=
 # NAME = Camilo        Juan
 
 CLASSES = \
+	Jaas.java \
 	SimpleEchoServerProcess.java \
 	SimpleEchoServer.java \
         SimpleEchoClient.java
