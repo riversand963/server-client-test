@@ -37,11 +37,17 @@
  * maintenance of any nuclear facility.
  */
 
-import org.ietf.jgss.*;
-import java.io.*;
+import org.ietf.jgss.GSSContext;
+import org.ietf.jgss.GSSCredential;
+import org.ietf.jgss.GSSManager;
+import org.ietf.jgss.MessageProp;
+import org.ietf.jgss.Oid;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.net.Socket;
 import java.net.ServerSocket;
-import java.security.*;
+import java.security.PrivilegedExceptionAction;
 import java.util.Date;
 
 /**
