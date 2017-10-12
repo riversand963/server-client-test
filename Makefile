@@ -56,6 +56,8 @@ FILE=
 
 CLASSES = \
 	Jaas.java \
+	GssServer.java \
+	GssClient.java \
 	SimpleEchoServerProcess.java \
 	SimpleEchoServer.java \
         SimpleEchoClient.java
