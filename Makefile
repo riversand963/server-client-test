@@ -58,6 +58,8 @@ CLASSES = \
 	Jaas.java \
 	GssServer.java \
 	GssClient.java \
+	SaslTestServer.java \
+	SaslTestClient.java \
 	SimpleEchoServerProcess.java \
 	SimpleEchoServer.java \
         SimpleEchoClient.java
