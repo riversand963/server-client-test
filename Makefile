@@ -55,14 +55,16 @@ FILE=
 # NAME = Camilo        Juan
 
 CLASSES = \
-	Jaas.java \
 	GssServer.java \
 	GssClient.java \
-	SaslTestServer.java \
+	Jaas.java \
+	JsseClient.java \
+	JsseServer.java \
 	SaslTestClient.java \
-	SimpleEchoServerProcess.java \
+	SaslTestServer.java \
+        SimpleEchoClient.java \
 	SimpleEchoServer.java \
-        SimpleEchoClient.java
+	SimpleEchoServerProcess.java
 
 #
 # MAIN is a variable with the name of the file containing the main method
