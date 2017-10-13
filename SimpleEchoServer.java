@@ -37,6 +37,7 @@ public class SimpleEchoServer {
         mMutualAuthRequired = mutualAuthRequired;
         mStopped = true;
     }
+
     public void start() throws Exception {
         if (mStopped) {
             // SSLServerSocketFactory.getDefault() is not secure. To gain more security,
@@ -81,6 +82,7 @@ public class SimpleEchoServer {
             mStopped = false;
         }
     }
+
     public void serve() throws Exception {
         if (mStopped) {
             System.out.println("Server not started.");
