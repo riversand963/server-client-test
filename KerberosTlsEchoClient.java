@@ -19,7 +19,6 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-
 public class KerberosTlsEchoClient {
     public static void main(String[] args) throws Exception {
         String host = args[0];

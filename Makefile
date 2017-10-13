@@ -62,7 +62,6 @@ CLASSES = \
 	JsseServer.java \
 	KerberosTlsEchoClient.java \
 	KerberosTlsEchoServer.java \
-	KerberosTlsEchoServerProcess.java \
 	SaslTestClient.java \
 	SaslTestServer.java \
         SimpleEchoClient.java \
