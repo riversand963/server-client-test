@@ -36,13 +36,12 @@
  * intended for use in the design, construction, operation or
  * maintenance of any nuclear facility.
  */
-import javax.security.sasl.*;
-import javax.security.auth.callback.*;
-import java.security.*;
-import javax.security.auth.Subject;
-import javax.security.auth.login.*;
-import com.sun.security.auth.callback.*;
+import java.security.PrivilegedExceptionAction;
 import java.util.HashMap;
+import javax.security.auth.Subject;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.sasl.Sasl;
+import javax.security.sasl.SaslClient;
 
 /**
  * A sample client application that uses SASL to authenticate to
