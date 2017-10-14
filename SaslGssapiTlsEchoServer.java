@@ -1,5 +1,7 @@
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.KeyStore;
@@ -102,6 +104,9 @@ public class SaslGssapiTlsEchoServer {
                 System.out.println("Waiting for incoming connection...");
                 Socket socket = mServerSocket.accept();
 
+                SSLSession session = ((SSLSocket) socket).getSession();
+                printSessionInfo(session);
+
                 // Create application-level connection to handle request
                 AppConnection conn = new AppConnection(socket);
 
@@ -185,6 +190,22 @@ public class SaslGssapiTlsEchoServer {
                 conn.send(AppConnection.SUCCESS, realReply);
             }
             return null;
+        }
+
+        private void printSessionInfo(SSLSession session) throws Exception {
+            Certificate[] cchan = session.getLocalCertificates();
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            for (int i = 0; i < cchan.length; i++) {
+                ByteArrayInputStream is = new ByteArrayInputStream(cchan[i].getEncoded());
+                X509Certificate x509Cert = (X509Certificate) cf.generateCertificate(is);
+                System.out.println(x509Cert.getSubjectDN());
+            }
+            System.out.println("Peer host is " + session.getPeerHost());
+            System.out.println("Cipher is " + session.getCipherSuite());
+            System.out.println("Protocol is " + session.getProtocol());
+            System.out.println("ID is " + new BigInteger(session.getId()));
+            System.out.println("Session created in " + session.getCreationTime());
+            System.out.println("Session accessed in " + session.getLastAccessedTime());
         }
     }
 
