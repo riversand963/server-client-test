@@ -59,7 +59,7 @@ public class Jaas {
         }
 
         // Create action to perform
-        PrivilegedExceptionAction action = new MyAction();
+        PrivilegedExceptionAction<Object> action = new MyAction();
 
         loginAndAction(name, action);
     }
@@ -99,7 +99,7 @@ public class Jaas {
     }
 
     // Action to perform
-    static class MyAction implements PrivilegedExceptionAction {
+    static class MyAction implements PrivilegedExceptionAction<Object> {
         MyAction() {
         }
 

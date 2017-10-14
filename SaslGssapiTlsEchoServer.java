@@ -39,12 +39,12 @@ public class SaslGssapiTlsEchoServer {
         String service = args[0];
         String serverName = args[1];
         boolean mutualAuthRequired = Boolean.parseBoolean(args[2]);
-        PrivilegedExceptionAction action =
+        PrivilegedExceptionAction<Object> action =
             new SaslGssapiTlsEchoServerAction(service, serverName, PORT, mutualAuthRequired);
         Jaas.loginAndAction("server", action);
     }
 
-    private static class SaslGssapiTlsEchoServerAction implements PrivilegedExceptionAction {
+    private static class SaslGssapiTlsEchoServerAction implements PrivilegedExceptionAction<Object> {
         private String mService;
         private String mServerName;
         private int mPort;

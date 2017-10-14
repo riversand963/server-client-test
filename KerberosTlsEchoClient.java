@@ -58,7 +58,7 @@ public class KerberosTlsEchoClient {
         System.out.println("   Protocol = "+ss.getProtocol());
     }
 
-    private static class KerberosTlsEchoClientAction implements PrivilegedExceptionAction {
+    private static class KerberosTlsEchoClientAction implements PrivilegedExceptionAction<Object> {
         private String mHost;
         private int mPort;
         private boolean mMutualAuthRequired;
@@ -102,7 +102,7 @@ public class KerberosTlsEchoClient {
             SSLSocket socket =
                 (SSLSocket) sslSocketFactory.createSocket(mHost, mPort);
             // Do NOT use weak protocols and cipher suites. Configure this according to requirements.
-            ((SSLSocket) socket).setEnabledProtocols(new String[] {"TLSv1.2"});
+            socket.setEnabledProtocols(new String[] {"TLSv1.2"});
             // ((SSLSocket) socket).setEnabledCipherSuites(new String[] {"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"});
 
             socket.setNeedClientAuth(mMutualAuthRequired);
@@ -110,7 +110,7 @@ public class KerberosTlsEchoClient {
 
             socket.startHandshake();
 
-            SSLSession session = ((SSLSocket) socket).getSession();
+            SSLSession session = socket.getSession();
             printSessionInfo(session);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in));

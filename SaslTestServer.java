@@ -102,13 +102,13 @@ public class SaslTestServer {
             System.exit(-1);
         }
 
-        PrivilegedExceptionAction action =
+        PrivilegedExceptionAction<Object> action =
             new SaslServerAction(args[0], args[1], PORT);
 
         Jaas.loginAndAction("server", action);
     }
 
-    static class SaslServerAction implements PrivilegedExceptionAction {
+    static class SaslServerAction implements PrivilegedExceptionAction<Object> {
         private String service;      // used for SASL authentication
         private String serverName;   // named used for SASL authentication
         private int localPort;

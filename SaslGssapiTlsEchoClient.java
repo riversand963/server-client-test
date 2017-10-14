@@ -28,12 +28,12 @@ public class SaslGssapiTlsEchoClient {
         String service = args[0];
         String serverName = args[1];
         boolean mutualAuthRequired = Boolean.parseBoolean(args[2]);
-        PrivilegedExceptionAction action =
+        PrivilegedExceptionAction<Object> action =
             new SaslGssapiTlsEchoClientAction(service, serverName, PORT, mutualAuthRequired);
         Jaas.loginAndAction("client", action);
     }
 
-    private static class SaslGssapiTlsEchoClientAction implements PrivilegedExceptionAction {
+    private static class SaslGssapiTlsEchoClientAction implements PrivilegedExceptionAction<Object> {
         private String mService;
         private String mServerName;
         private int mPort;
@@ -79,14 +79,14 @@ public class SaslGssapiTlsEchoClient {
             SSLSocket socket =
                 (SSLSocket) sslSocketFactory.createSocket(mServerName, mPort);
             // Do NOT use weak protocols and cipher suites. Configure this according to requirements.
-            ((SSLSocket) socket).setEnabledProtocols(new String[] {"TLSv1.2"});
+            socket.setEnabledProtocols(new String[] {"TLSv1.2"});
             // ((SSLSocket) socket).setEnabledCipherSuites(new String[] {"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"});
 
             socket.setNeedClientAuth(mMutualAuthRequired);
             printSocketInfo(socket);
 
             socket.startHandshake();
-            SSLSession session = ((SSLSocket) socket).getSession();
+            SSLSession session = socket.getSession();
             printSessionInfo(session);
 
             // Create application-level connection

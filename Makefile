@@ -8,7 +8,7 @@
 CLASSPATH=.:${HOME}/Workspace/apache-log4j-1.2.17/*
 
 #JFLAGS = -g
-JFLAGS =
+JFLAGS = -Xlint
 JC = javac
 JVM= java 
 FILE=

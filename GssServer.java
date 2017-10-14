@@ -87,12 +87,12 @@ public class GssServer  {
 
     public static void main(String[] args) throws Exception {
 
-        PrivilegedExceptionAction action = new GssServerAction(PORT);
+        PrivilegedExceptionAction<Object> action = new GssServerAction(PORT);
 
         Jaas.loginAndAction("server", action);
     }
 
-    static class GssServerAction implements PrivilegedExceptionAction {
+    static class GssServerAction implements PrivilegedExceptionAction<Object> {
         private int localPort;
 
         GssServerAction(int port) {
@@ -132,8 +132,7 @@ public class GssServer  {
                  * can be used to accept this connection.
                  */
 
-                GSSContext context = manager.createContext(
-                    (GSSCredential)serverCreds);
+                GSSContext context = manager.createContext(serverCreds);
 
                 // Do the context establishment loop
 

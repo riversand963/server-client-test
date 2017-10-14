@@ -63,12 +63,12 @@ public class JsseClient {
             System.exit(-1);
         }
 
-        PrivilegedExceptionAction action = new JsseClientAction(args[0], PORT);
+        PrivilegedExceptionAction<Object> action = new JsseClientAction(args[0], PORT);
 
         Jaas.loginAndAction("client", action);
     }
 
-    static class JsseClientAction implements PrivilegedExceptionAction {
+    static class JsseClientAction implements PrivilegedExceptionAction<Object> {
         private String server;
         private int port;
 

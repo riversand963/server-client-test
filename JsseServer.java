@@ -67,12 +67,12 @@ public class JsseServer {
 
     public static void main(String[] args) throws Exception {
 
-        PrivilegedExceptionAction action = new JsseServerAction(PORT);
+        PrivilegedExceptionAction<Object> action = new JsseServerAction(PORT);
 
         Jaas.loginAndAction("server", action);
     }
 
-    static class JsseServerAction implements PrivilegedExceptionAction {
+    static class JsseServerAction implements PrivilegedExceptionAction<Object> {
         private int localPort;
 
         JsseServerAction(int port) {

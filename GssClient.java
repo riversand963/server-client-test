@@ -95,13 +95,13 @@ public class GssClient {
 
         String serverPrinc = args[0] + "@" + args[1];
 
-        PrivilegedExceptionAction action =
+        PrivilegedExceptionAction<Object> action =
             new GssClientAction(serverPrinc, args[1], PORT);
 
         Jaas.loginAndAction("client", action);
     }
 
-    static class GssClientAction implements PrivilegedExceptionAction {
+    static class GssClientAction implements PrivilegedExceptionAction<Object> {
         private String serverPrinc;
         private String hostName;
         private int port;

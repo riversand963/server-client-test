@@ -95,13 +95,13 @@ public class SaslTestClient {
             System.exit(-1);
         }
 
-        PrivilegedExceptionAction action =
+        PrivilegedExceptionAction<Object> action =
             new SaslClientAction(args[0], args[1], PORT);
 
         Jaas.loginAndAction("client", action);
     }
 
-    static class SaslClientAction implements PrivilegedExceptionAction {
+    static class SaslClientAction implements PrivilegedExceptionAction<Object> {
         private String service;      // used for SASL authentication
         private String serverName;   // name used for SASL authentication
         private int port;

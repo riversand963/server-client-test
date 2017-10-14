@@ -55,7 +55,7 @@ public class SimpleEchoClient {
         SSLSocket socket =
             (SSLSocket) sslSocketFactory.createSocket(hostName, port);
         // Do NOT use weak protocols and cipher suites. Configure this according to requirements.
-        ((SSLSocket) socket).setEnabledProtocols(new String[] {"TLSv1.2"});
+        socket.setEnabledProtocols(new String[] {"TLSv1.2"});
         // ((SSLSocket) socket).setEnabledCipherSuites(new String[] {"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"});
 
         socket.setNeedClientAuth(mutualAuthRequired);
@@ -63,7 +63,7 @@ public class SimpleEchoClient {
 
         socket.startHandshake();
 
-        SSLSession session = ((SSLSocket) socket).getSession();
+        SSLSession session = socket.getSession();
         printSessionInfo(session);
 
         BufferedReader in = new BufferedReader(

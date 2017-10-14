@@ -48,7 +48,7 @@ public class KerberosTlsEchoServer {
         System.out.println("Session accessed in " + session.getLastAccessedTime());
     }
 
-    private static class KerberosTlsEchoServerAction implements PrivilegedExceptionAction {
+    private static class KerberosTlsEchoServerAction implements PrivilegedExceptionAction<Object> {
         private final int mPort;
         private final boolean mMutualAuthRequired;
         private ServerSocketFactory mServerSocketFactory;
