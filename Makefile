@@ -69,8 +69,7 @@ CLASSES = \
 	SaslTestServer.java \
         SimpleEchoClient.java \
 	SimpleEchoServer.java \
-	SimpleEchoServerProcess.java \
-	TlsAppConnection.java
+	SimpleEchoServerProcess.java
 
 #
 # MAIN is a variable with the name of the file containing the main method

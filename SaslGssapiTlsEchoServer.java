@@ -1,6 +1,12 @@
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.KeyStore;
 import java.security.PrivilegedExceptionAction;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.HashMap;
 import javax.net.ServerSocketFactory;
@@ -30,8 +36,9 @@ public class SaslGssapiTlsEchoServer {
     public static void main(String[] args) throws Exception {
         String service = args[0];
         String serverName = args[1];
+        boolean mutualAuthRequired = Boolean.parseBoolean(args[2]);
         PrivilegedExceptionAction action =
-            new SaslGssapiTlsEchoServerAction(service, serverName, PORT);
+            new SaslGssapiTlsEchoServerAction(service, serverName, PORT, mutualAuthRequired);
         Jaas.loginAndAction("server", action);
     }
 
@@ -39,18 +46,53 @@ public class SaslGssapiTlsEchoServer {
         private String mService;
         private String mServerName;
         private int mPort;
+        private boolean mMutualAuthRequired;
         private CallbackHandler mCallbackHandler = new TestCallbackHandler();
         private ServerSocketFactory mServerSocketFactory;
         private ServerSocket mServerSocket;
 
-        public SaslGssapiTlsEchoServerAction(String service, String serverName, int port) {
+        public SaslGssapiTlsEchoServerAction(String service, String serverName, int port, boolean mutualAuthRequired) {
             mService = service;
             mServerName = serverName;
             mPort = port;
+            mMutualAuthRequired = mutualAuthRequired;
         }
 
         public Object run() throws Exception {
-            ServerSocket ss = new ServerSocket(mPort);
+            String keyStoreFilePath = System.getProperty("javax.net.ssl.keyStore");
+            String keyStorePassword = System.getProperty("javax.net.ssl.keyStorePassword");
+            InputStream ksFin = new FileInputStream(keyStoreFilePath);
+            char[] ksPassword = keyStorePassword.toCharArray();
+            KeyStore ksKeys = KeyStore.getInstance("PKCS12");
+            ksKeys.load(ksFin, ksPassword);
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+            kmf.init(ksKeys, ksPassword);
+
+            TrustManagerFactory tmf = null;
+            if (mMutualAuthRequired) {
+                String trustStoreFilePath = System.getProperty("javax.net.ssl.trustStore");
+                String trustStorePassword = System.getProperty("javax.net.ssl.trustStorePassword");
+                InputStream tsFin = new FileInputStream(trustStoreFilePath);
+                char[] tsPassword = trustStorePassword.toCharArray();
+                KeyStore ksTrust = KeyStore.getInstance("JKS");
+                ksTrust.load(tsFin, tsPassword);
+                tmf = TrustManagerFactory.getInstance("SunX509");
+                tmf.init(ksTrust);
+            }
+
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(kmf.getKeyManagers(),
+                tmf != null ? tmf.getTrustManagers() : null, null);
+
+            mServerSocketFactory = sslContext.getServerSocketFactory();
+            mServerSocket = mServerSocketFactory.createServerSocket(mPort);
+
+            // Need client auth
+            ((SSLServerSocket) mServerSocket).setNeedClientAuth(mMutualAuthRequired);
+
+            // Do NOT use weak protocols and cipher suites. Configure this according to requirements.
+            ((SSLServerSocket) mServerSocket).setEnabledProtocols(new String[] {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"});
+            // ((SSLServerSocket) mServerSocket).setEnabledCipherSuites(new String[] {"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256"});
 
             HashMap<String,Object> props = new HashMap<String,Object>();
             props.put(Sasl.QOP, "auth-conf,auth-int,auth");
@@ -58,7 +100,7 @@ public class SaslGssapiTlsEchoServer {
             // Loop, accepting requests from any client
             while (loopCount++ < LOOP_LIMIT) {
                 System.out.println("Waiting for incoming connection...");
-                Socket socket = ss.accept();
+                Socket socket = mServerSocket.accept();
 
                 // Create application-level connection to handle request
                 AppConnection conn = new AppConnection(socket);
