@@ -55,6 +55,7 @@ FILE=
 # NAME = Camilo        Juan
 
 CLASSES = \
+	AppConnection.java \
 	GssServer.java \
 	GssClient.java \
 	Jaas.java \
@@ -62,11 +63,14 @@ CLASSES = \
 	JsseServer.java \
 	KerberosTlsEchoClient.java \
 	KerberosTlsEchoServer.java \
+	SaslGssapiTlsEchoServer.java \
+	SaslGssapiTlsEchoClient.java \
 	SaslTestClient.java \
 	SaslTestServer.java \
         SimpleEchoClient.java \
 	SimpleEchoServer.java \
-	SimpleEchoServerProcess.java
+	SimpleEchoServerProcess.java \
+	TlsAppConnection.java
 
 #
 # MAIN is a variable with the name of the file containing the main method
