@@ -64,7 +64,7 @@ public class Jaas {
         loginAndAction(name, action);
     }
 
-    static void loginAndAction(String name, PrivilegedExceptionAction action)
+    static void loginAndAction(String name, PrivilegedExceptionAction<Object> action)
         throws LoginException, PrivilegedActionException {
 
         // Create a callback handler
