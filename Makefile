@@ -5,7 +5,8 @@
 # define a variable for a parameter. When you run make, you could use:
 # make run FILE="Algo.csv" para sobre escribir el valor de FILE. 
 
-CLASSPATH=.:${HOME}/Workspace/apache-log4j-1.2.17/*
+HADOOP_CLASSPATH=/Users/yanqin/Workspace/hadoop-dev/hadoop-dist/target/hadoop-2.7.5/share/hadoop/common/lib/*:/Users/yanqin/Workspace/hadoop-dev/hadoop-dist/target/hadoop-2.7.5/share/hadoop/common/*:/Users/yanqin/Workspace/hadoop-dev/hadoop-dist/target/hadoop-2.7.5/share/hadoop/hdfs:/Users/yanqin/Workspace/hadoop-dev/hadoop-dist/target/hadoop-2.7.5/share/hadoop/hdfs/lib/*:/Users/yanqin/Workspace/hadoop-dev/hadoop-dist/target/hadoop-2.7.5/share/hadoop/hdfs/*:/Users/yanqin/Workspace/hadoop-dev/hadoop-dist/target/hadoop-2.7.5/share/hadoop/yarn/lib/*:/Users/yanqin/Workspace/hadoop-dev/hadoop-dist/target/hadoop-2.7.5/share/hadoop/yarn/*:/Users/yanqin/Workspace/hadoop-dev/hadoop-dist/target/hadoop-2.7.5/share/hadoop/mapreduce/lib/*:/Users/yanqin/Workspace/hadoop-dev/hadoop-dist/target/hadoop-2.7.5/share/hadoop/mapreduce/*:/contrib/capacity-scheduler/*.jar
+CLASSPATH=.:${HOME}/Workspace/apache-log4j-1.2.17/*:${HADOOP_CLASSPATH}
 
 #JFLAGS = -g
 JFLAGS = -Xlint
@@ -67,7 +68,9 @@ CLASSES = \
 	SaslGssapiTlsEchoClient.java \
 	SaslTestClient.java \
 	SaslTestServer.java \
-        SimpleEchoClient.java \
+	SimpleCacheClient.java \
+	SimpleCacheServer.java \
+	SimpleEchoClient.java \
 	SimpleEchoServer.java \
 	SimpleEchoServerProcess.java
 
