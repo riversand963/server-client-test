@@ -49,7 +49,7 @@ import javax.security.auth.login.LoginException;
 
 public class Jaas {
     private static String name;
-    private static final boolean verbose = false;
+    private static final boolean verbose = true;
 
     public static void main(String[] args) throws Exception {
         if (args.length > 0) {
@@ -88,6 +88,9 @@ public class Jaas {
         Subject subject = context.getSubject();
         if (verbose) {
             System.out.println(subject.toString());
+            for (Object cred : subject.getPrivateCredentials()) {
+                System.out.println(cred);
+            }
         } else {
             System.out.println("Authenticated principal: " +
                 subject.getPrincipals());
