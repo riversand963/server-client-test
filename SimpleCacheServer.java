@@ -22,8 +22,9 @@ import javax.security.sasl.SaslServer;
 public class SimpleCacheServer {
     private static final String MECH = "GSSAPI"; // SASL name for GSS-API/Kerberos
     private static final int PORT = 4568;
-    private static final int LOOP_LIMIT = 1;
+    private static final int LOOP_LIMIT = 100;
     private static int sLoopCount = 0;
+    private static FileSystem mFileSystem;
 
 	public static void main(String[] args) throws Exception {
         PrivilegedExceptionAction<Object> action =
@@ -44,16 +45,22 @@ public class SimpleCacheServer {
             System.err.println("Login failed.");
             System.exit(1);
         }
-        FileSystem fs;
         try {
-            fs = FileSystem.get(conf);
+            HdfsSecurityUtils.runAsCurrentUser(new HdfsSecurityUtils.SecuredRunner<Void>() {
+                @Override
+                public Void run() throws IOException {
+                  Path path = new Path("hdfs://localhost:9000/alluxio");
+                  mFileSystem = path.getFileSystem(conf);
+                  return null;
+                }
+            });
         } catch (IOException e) {
-            fs = null;
-            System.err.println("Create to create file system client.");
+            mFileSystem = null;
+            System.err.println("Cannot login to Hadoop");
             System.exit(2);
         }
         try {
-            FileStatus[] fsStatus = fs.listStatus(new Path("/"));
+            FileStatus[] fsStatus = mFileSystem.listStatus(new Path("/"));
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
             System.err.println("File not found.");

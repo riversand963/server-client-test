@@ -59,6 +59,7 @@ CLASSES = \
 	AppConnection.java \
 	GssServer.java \
 	GssClient.java \
+	HdfsSecurityUtils.java \
 	Jaas.java \
 	JsseClient.java \
 	JsseServer.java \
