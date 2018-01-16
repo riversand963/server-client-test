@@ -10,6 +10,8 @@
  */
 
 import org.apache.hadoop.security.UserGroupInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.security.PrivilegedExceptionAction;
@@ -19,6 +21,7 @@ import java.security.PrivilegedExceptionAction;
  * security user and groups information.
  */
 public final class HdfsSecurityUtils {
+  private static final Logger LOG = LoggerFactory.getLogger(HdfsSecurityUtils.class);
   private static boolean isHdfsSecurityEnabled() {
     return UserGroupInformation.isSecurityEnabled();
   }
@@ -57,9 +60,9 @@ public final class HdfsSecurityUtils {
       return runner.run();
     }
 
-    System.out.println("UGI: " + ugi.toString());
-    System.out.println("UGI login user " + ugi.getLoginUser());
-    System.out.println("UGI current user " + ugi.getCurrentUser());
+    LOG.info("UGI: " + ugi.toString());
+    LOG.info("UGI login user " + ugi.getLoginUser());
+    LOG.info("UGI current user " + ugi.getCurrentUser());
 
     if (ugi.getAuthenticationMethod() == UserGroupInformation.AuthenticationMethod.KERBEROS
         && !ugi.hasKerberosCredentials()) {

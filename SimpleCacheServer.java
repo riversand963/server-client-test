@@ -3,6 +3,8 @@ import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.security.UserGroupInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,6 +22,7 @@ import javax.security.sasl.SaslException;
 import javax.security.sasl.SaslServer;
 
 public class SimpleCacheServer {
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleCacheServer.class);
     private static final String MECH = "GSSAPI"; // SASL name for GSS-API/Kerberos
     private static final int PORT = 4568;
     private static final int LOOP_LIMIT = 100;
