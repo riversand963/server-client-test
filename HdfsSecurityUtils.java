@@ -36,7 +36,7 @@ public final class HdfsSecurityUtils {
    */
   public static <T> T runAsCurrentUser(final SecuredRunner<T> runner) throws IOException {
     if (!isHdfsSecurityEnabled()) {
-      System.out.println("security is not enabled");
+      LOG.warn("security is not enabled");
       return runner.run();
     }
 
@@ -56,7 +56,7 @@ public final class HdfsSecurityUtils {
   public static <T> T runAs(UserGroupInformation ugi, final SecuredRunner<T> runner)
       throws IOException {
     if (!isHdfsSecurityEnabled()) {
-      System.out.println("security is not enabled");
+      LOG.warn("security is not enabled");
       return runner.run();
     }
 
@@ -66,7 +66,7 @@ public final class HdfsSecurityUtils {
 
     if (ugi.getAuthenticationMethod() == UserGroupInformation.AuthenticationMethod.KERBEROS
         && !ugi.hasKerberosCredentials()) {
-      System.err.println("UFS Kerberos security is enabled but UGI has no Kerberos credentials. "
+      LOG.error("UFS Kerberos security is enabled but UGI has no Kerberos credentials. "
           + "Please check Alluxio configurations for Kerberos principal and keytab file.");
     }
     try {

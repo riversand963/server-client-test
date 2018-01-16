@@ -63,7 +63,17 @@ public class SimpleCacheServer {
             System.exit(2);
         }
         try {
-            FileStatus[] fsStatus = mFileSystem.listStatus(new Path("/"));
+            int count = 0;
+            while (count < 200) {
+                FileStatus[] fsStatus = mFileSystem.listStatus(new Path("/"));
+                count++;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    System.err.println("Thread interrupted.");
+                    break;
+                }
+            }
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
             System.err.println("File not found.");
